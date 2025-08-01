@@ -1,0 +1,21 @@
+tunnel: your-tunnel-id
+credentials-file: /path/to/your/tunnel/credentials.json
+
+# For multi-tenant support
+ingress:
+  # Route for webhooks (main domain)
+  - hostname: webhooks.saasbee.app
+    service: http://saasbee.test:80
+    originRequest:
+      httpHostHeader: saasbee.test
+      noTLSVerify: true
+
+  # Optional: Route for specific tenant testing
+  - hostname: foo.saasbee.app
+    service: http://foo.saasbee.test:80
+    originRequest:
+      httpHostHeader: foo.saasbee.test
+      noTLSVerify: true
+
+  # Catch-all rule (required)
+  - service: http_status:404

@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: saasbee
+      POSTGRES_USER: saasbee
+      POSTGRES_PASSWORD: saasbee
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    volumes:
+      - minio_data:/data
+
+  redis:
+    image: redis:7
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+
+  mailpit:
+    image: axllent/mailpit:latest
+    restart: unless-stopped
+    ports:
+      - '8025:8025' # Web UI
+      - '1025:1025' # SMTP
+
+  meilisearch:
+    image: getmeili/meilisearch:latest
+    environment:
+      MEILI_NO_ANALYTICS: 'true'
+      MEILI_MASTER_KEY: 'masterKey'
+    ports:
+      - '7700:7700'
+    volumes:
+      - meili_data:/meili_data
+
+volumes:
+  postgres_data:
+  minio_data:
+  redis_data:
+  meili_data:
